@@ -1,0 +1,266 @@
+var pluginName = 'Radial Lines';
+
+var getArtboard = function(selection) {
+  currentArtboard = selection[0];
+  var current_class = [currentArtboard class];
+  while(currentArtboard && ([currentArtboard class] !== MSArtboardGroup)) {
+    currentArtboard.setIsSelected(0);
+    currentArtboard = [currentArtboard parentGroup];
+  }
+  currentArtboard.setIsSelected(1);
+  return currentArtboard;
+}
+
+function createSettingsPanel(artboard, doc){
+  var formatter = [[NSNumberFormatter alloc] init];
+  [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+  var accessoryView = NSView.alloc().initWithFrame(NSMakeRect(0,20,278,150))
+
+  var checkBox  = NSButton.alloc().initWithFrame(NSMakeRect(0,31,18,18))
+  [checkBox setButtonType:NSSwitchButton]
+  [checkBox setStringValue: ''];
+  [checkBox setBezelStyle:0]
+
+  var checkBoxLabel = NSTextField.alloc().initWithFrame(NSMakeRect(20,27,270,20))
+  checkBoxLabel.setStringValue("Align ending points to artboard's border");
+  [checkBoxLabel setDrawsBackground:false];
+  [checkBoxLabel setEditable:false];
+  [checkBoxLabel setEditable:false];
+  [checkBoxLabel setSelectable:false];
+  [checkBoxLabel setBezeled:false];
+  [checkBoxLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var checkBoxByline = NSTextField.alloc().initWithFrame(NSMakeRect(0,0,278,30))
+  checkBoxByline.setStringValue("If uncheckd an invisible circle will be used as path to align the ending points to. Distributing all lines evenly.");
+  [checkBoxByline setDrawsBackground:false];
+  [checkBoxByline setEditable:false];
+  [checkBoxByline setEditable:false];
+  [checkBoxByline setSelectable:false];
+  [checkBoxByline setBezeled:false];
+  [checkBoxByline setFont:[NSFont systemFontOfSize:10]]]
+
+  var inputAmountLabel = NSTextField.alloc().initWithFrame(NSMakeRect(0,132,220,20))
+  inputAmountLabel.setStringValue('Amount of Lines')
+  [inputAmountLabel setDrawsBackground:false];
+  [inputAmountLabel setEditable:false];
+  [inputAmountLabel setSelectable:false];
+  [inputAmountLabel setBezeled:false];
+  [inputAmountLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var inputAmount = NSTextField.alloc().initWithFrame(NSMakeRect(0,110,140,25))
+  inputAmount.setStringValue('0')
+  inputAmount.setFormatter(formatter)
+
+  var inputXLabel = NSTextField.alloc().initWithFrame(NSMakeRect(150,132,70,20))
+  inputXLabel.setStringValue('X (%)')
+  [inputXLabel setDrawsBackground:false];
+  [inputXLabel setEditable:false];
+  [inputXLabel setSelectable:false];
+  [inputXLabel setBezeled:false];
+  [inputXLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var inputX = NSTextField.alloc().initWithFrame(NSMakeRect(150,110,55,25))
+  inputX.setStringValue('0')
+  inputX.setFormatter(formatter)
+
+  var inputYLabel = NSTextField.alloc().initWithFrame(NSMakeRect(215,132,70,20))
+  inputYLabel.setStringValue('Y (%)')
+  [inputYLabel setDrawsBackground:false];
+  [inputYLabel setEditable:false];
+  [inputYLabel setSelectable:false];
+  [inputYLabel setBezeled:false];
+  [inputYLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var inputY = NSTextField.alloc().initWithFrame(NSMakeRect(215,110,55,25))
+  inputY.setStringValue('0')
+  inputY.setFormatter(formatter)
+
+  var widthLabel = NSTextField.alloc().initWithFrame(NSMakeRect(0,82,220,20))
+  widthLabel.setStringValue('Width')
+  [widthLabel setDrawsBackground:false];
+  [widthLabel setEditable:false];
+  [widthLabel setSelectable:false];
+  [widthLabel setBezeled:false];
+  [widthLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var widthInput = NSTextField.alloc().initWithFrame(NSMakeRect(0,60,140,25))
+  widthInput.setStringValue('0.5')
+  widthInput.setFormatter(formatter)
+  var colorLabel = NSTextField.alloc().initWithFrame(NSMakeRect(150,82,220,20))
+  colorLabel.setStringValue('Color (#HEXHEX)')
+  [colorLabel setDrawsBackground:false];
+  [colorLabel setEditable:false];
+  [colorLabel setSelectable:false];
+  [colorLabel setBezeled:false];
+  [colorLabel setFont:[NSFont systemFontOfSize:10]]]
+
+  var colorInput = NSTextField.alloc().initWithFrame(NSMakeRect(150,60,140,25))
+  colorInput.setStringValue('#AAAAAA')
+
+  accessoryView.addSubview(inputAmountLabel)
+  accessoryView.addSubview(inputAmount)
+  accessoryView.addSubview(inputXLabel)
+  accessoryView.addSubview(inputX)
+  accessoryView.addSubview(inputYLabel)
+  accessoryView.addSubview(inputY)
+  accessoryView.addSubview(widthLabel)
+  accessoryView.addSubview(widthInput)
+  accessoryView.addSubview(colorLabel)
+  accessoryView.addSubview(colorInput)
+  accessoryView.addSubview(checkBox)
+  accessoryView.addSubview(checkBoxLabel)
+  accessoryView.addSubview(checkBoxByline)
+
+  var alert = NSAlert.alloc().init()
+  alert.informativeText =  "Keep in mind that a high amount of lines will have implications on the performance of Sketch.";
+  alert.setMessageText(pluginName);
+  alert.addButtonWithTitle('Ok')
+  alert.addButtonWithTitle('Cancel')
+  alert.setAccessoryView(accessoryView)
+  var responseCode = alert.runModal()
+  var amount = inputAmount.intValue();
+  var x = inputX.intValue();
+  var y = inputY.intValue();
+  var random = 0;
+  if ([checkBox state]==NSOnState) {
+    random = 1
+  }
+  var width = artboard.frame().width();
+  var height = artboard.frame().height();
+  var strokewidth = widthInput.floatValue();
+  var strokecolor = colorInput.stringValue();
+
+  var error = false;
+  if (!error) {
+    return [responseCode, width, height, amount, x, y, random, strokewidth, strokecolor]
+  } else {
+    [doc showMessage: error]
+  }
+}
+
+var addLines = function(points,artboard, group, w, h, posX, posY, doc) {
+  var linegroup = [artboard addLayerOfType:"group"]
+  linegroup.setName('artboard-lines');
+  var frame = [linegroup frame]
+  [frame setWidth:w]
+  [frame setHeight:h]
+
+  for(var i=0;i<=points.length-1;i++) {
+    var start = points[i][0];
+    var end = points[i][0];
+    var line = NSBezierPath.bezierPath();
+    line.moveToPoint(NSMakePoint(start, end));
+    line.lineToPoint(NSMakePoint(posX,posY));
+    var lineshape = MSShapeGroup.shapeWithBezierPath(line);
+    lineshape.setName('Line - ' + i);
+    var shapeborder = lineshape.style().borders().addNewStylePart();
+    shapeborder.color = MSColor.colorWithSVGString("#AAAAAA");
+    shapeborder.thickness = 0.5;
+    linegroup.addLayers([lineshape]);
+  }
+}
+
+var prepareCage = function(artboard, group, doc, w, h, amount, start) {
+  var borderpath = NSBezierPath.bezierPath();
+  borderpath.moveToPoint(NSMakePoint(0,0));
+  borderpath.lineToPoint(NSMakePoint(w, 0));
+  borderpath.lineToPoint(NSMakePoint(w, h));
+  borderpath.lineToPoint(NSMakePoint(0, h));
+  borderpath.lineToPoint(NSMakePoint(0, 0));
+  return borderpath;
+}
+
+var prepareArtboard  = function(artboard, doc) {
+  var data = createSettingsPanel(artboard, doc);
+  var w = data[1];
+  var h = data[2];
+  var amount = data[3];
+  var x = data[4];
+  var y = data[5];
+  var random = data[6];
+  var strokewidth = data[7];
+  var strokecolor = data[8];
+  var posX = (w/100)*x;
+  var posY = (h/100)*y;
+
+  var orientation = ['north', 'east', 'south', 'west'];
+  var directionNorthSouth = null;
+  var directionWestEast = null;
+
+  var group = [artboard addLayerOfType:"group"]
+  group.setName('artboard-mask');
+  var frame = [group frame]
+  [frame setWidth:w]
+  [frame setHeight:h]
+
+  if (y < 50) {
+    directionNorthSouth = orientation[0]
+  } else if (y > 50) {
+    directionNorthSouth = orientation[2]
+  }
+
+  if (x < 50) {
+    directionWestEast = orientation[3]
+  } else if (x > 50) {
+    directionWestEast = orientation[1]
+  }
+
+  if (!directionNorthSouth && !directionWestEast) {
+    // 50 50
+    var borderpath = prepareCage(artboard, group, doc, w, h, amount, null)
+  } else {
+    var borderpath = prepareCage(artboard, group, doc, w, h, amount, directionNorthSouth + '-' + directionWestEast)
+  }
+
+  if (random == 1) {
+    var circleshape = MSShapeGroup.shapeWithBezierPath(borderpath);
+  } else {
+    var rect = NSMakeRect(posX-(w*2), posY-(h*2), (w*4), (h*4));
+    var circle = [NSBezierPath bezierPath];
+    [circle appendBezierPathWithOvalInRect:rect]
+    var circleshape = MSShapeGroup.shapeWithBezierPath(circle);
+  }
+
+  function createLine(x,y,parent) {
+    var line = NSBezierPath.bezierPath();
+    line.moveToPoint(NSMakePoint(x, y));
+    line.lineToPoint(NSMakePoint(posX, posY));
+    var lineshape = MSShapeGroup.shapeWithBezierPath(line);
+    lineshape.setName('Line - ' + i);
+    var shapeborder = lineshape.style().borders().addNewStylePart();
+    shapeborder.color = MSColor.colorWithSVGString(strokecolor);
+    shapeborder.thickness = strokewidth;
+    parent.addLayers([lineshape]);
+  }
+
+  var count=amount;
+  var path=circleshape.bezierPathWithTransforms();
+  var step=path.length()/count;
+  for(var i=1;i<=count;i++) {
+    var point=path.pointOnPathAtLength(step*i);
+    createLine(point.x,point.y,group, posX, posY);
+  }
+  group.addLayers([circleshape]);
+}
+
+var distributeLines = function(context) {
+  var doc =  context.document;
+  var selection = context.selection;
+  var allArtboards = [[doc currentPage] artboards];
+
+  if ([allArtboards length] === 0) {
+    [doc showMessage: pluginName + ': Bummer! This plugin needs at least one artboard. Add one first! (A).'];
+  } else {
+    if (!(selection && [selection length]) || (selection.length()==0)) {
+      var lastIndex = [allArtboards length] - 1;
+      nextArtboard = allArtboards[lastIndex];
+      nextArtboard.setIsSelected(1);
+      prepareArtboard(nextArtboard, doc);
+    } else {
+      var currentArtboard = getArtboard(selection);
+      prepareArtboard(currentArtboard, doc);
+    }
+  }
+}
+
+// distributeLines(context);
