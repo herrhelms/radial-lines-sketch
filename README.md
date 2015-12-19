@@ -11,7 +11,7 @@ Select any artboard you have in your document. If there aren't any, go ahead and
 A modal will appear where you can define the setup for the lines you wish to create.
 
 ### Customization
-Within the modal you can choose the quantity of lines, their color, and their stroke width. Optionally the lines will be distributed evenly with the same distance to one another. Or dependent on the artboard's border. (Take a look at the red example in the screenshot above.)
+Within the modal you can choose the origin and quantity of lines, their color, and their stroke width. Optionally the lines will be distributed evenly with the same distance to one another. Or dependent on the artboard's border. (Take a look at the red example in the screenshot above.)
 
 ### That's all folks
 This is my third Sketch Plugin, please feel free to [contact me](http://bit.ly/1MSRFbd) via twitter for comments, suggestions and critique. Take a look at the [first one](http://github.com/herrhelms/social-artboards-sketch) and the [second one](http://github.com/herrhelms/even-guides-sketch).
