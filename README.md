@@ -4,7 +4,7 @@ This is a Plugin for [Sketch App](http://www.sketchapp.com) that generates lines
 ![Screenshot](https://www.dropbox.com/s/rf8yk0s3cis5rp6/sketchplugin_radial_lines.jpg?raw=1)
 
 ## Installation
-Install this plugin via [Sketch Toolbox](http://sketchtoolbox.com) or download the package manually into to your Sketch3 Plugin folder. The path should resemble the following
+Install this plugin ~~via [Sketch Toolbox](http://sketchtoolbox.com) or~~ (PR of plugin-registry not merged yet) download the package manually into to your Sketch3 Plugin folder. The path should resemble the following
 ```.../com.bohemiancoding.sketch3/Plugins/radial-lines-master``` **Tipp:** The .sketchplugin file should reside in a directory!
 
 Select any artboard you have in your document. If there aren't any, go ahead and create a new one. (Pressing the `A` key is the fastes way to do so.) Afterwards either goto the plugins menu and select `Radial Lines -> Distribute Lines` or use keyboard shortcut `Cmd+Alt+b`.
