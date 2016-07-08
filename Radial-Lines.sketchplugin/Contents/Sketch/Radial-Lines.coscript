@@ -139,7 +139,8 @@ function createSettingsPanel(artboard, doc){
 }
 
 var addLines = function(points,artboard, group, w, h, posX, posY, doc) {
-  var linegroup = [artboard addLayerOfType:"group"]
+  var linegroup = [MSLayerGroup new];
+  artboard.addLayers([linegroup]);
   linegroup.setName('artboard-lines');
   var frame = [linegroup frame]
   [frame setWidth:w]
@@ -153,7 +154,7 @@ var addLines = function(points,artboard, group, w, h, posX, posY, doc) {
     line.lineToPoint(NSMakePoint(posX,posY));
     var lineshape = MSShapeGroup.shapeWithBezierPath(line);
     lineshape.setName('Line - ' + i);
-    var shapeborder = lineshape.style().borders().addNewStylePart();
+    var shapeborder = lineshape.style().addStylePartOfType(1);
     shapeborder.color = MSColor.colorWithSVGString("#AAAAAA");
     shapeborder.thickness = 0.5;
     linegroup.addLayers([lineshape]);
@@ -187,7 +188,9 @@ var prepareArtboard  = function(artboard, doc) {
   var directionNorthSouth = null;
   var directionWestEast = null;
 
-  var group = [artboard addLayerOfType:"group"]
+  var group = [MSArtboardGroup new]
+  artboard.addLayers([group]);
+
   group.setName('artboard-mask');
   var frame = [group frame]
   [frame setWidth:w]
@@ -227,7 +230,7 @@ var prepareArtboard  = function(artboard, doc) {
     line.lineToPoint(NSMakePoint(posX, posY));
     var lineshape = MSShapeGroup.shapeWithBezierPath(line);
     lineshape.setName('Line - ' + i);
-    var shapeborder = lineshape.style().borders().addNewStylePart();
+    var shapeborder = lineshape.style().addStylePartOfType(1);
     shapeborder.color = MSColor.colorWithSVGString(strokecolor);
     shapeborder.thickness = strokewidth;
     parent.addLayers([lineshape]);
@@ -248,11 +251,11 @@ var distributeLines = function(context) {
   var selection = context.selection;
   var allArtboards = [[doc currentPage] artboards];
 
-  if ([allArtboards length] === 0) {
+  if ([allArtboards count] === 0) {
     [doc showMessage: pluginName + ': Bummer! This plugin needs at least one artboard. Add one first! (A).'];
   } else {
-    if (!(selection && [selection length]) || (selection.length()==0)) {
-      var lastIndex = [allArtboards length] - 1;
+    if (!(selection && [selection count]) || [selection count] == 0) {
+      var lastIndex = [allArtboards count] - 1;
       nextArtboard = allArtboards[lastIndex];
       nextArtboard.setIsSelected(1);
       prepareArtboard(nextArtboard, doc);
