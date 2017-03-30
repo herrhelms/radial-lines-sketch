@@ -3,7 +3,7 @@
   "description": "Generate and distribute lines originating from a certain coordinate of an artboard",
   "author": "herrhelms",
   "homepage": "https://github.com/herrhelms/radial-lines-sketch",
-  "version": 1.1,
+  "version": 1.2,
   "identifier": "com.github.herrhelms.radial-lines-sketch",
   "updateURL": "https://github.com/herrhelms/radial-lines-sketch",
   "compatibleVersion": 3,
