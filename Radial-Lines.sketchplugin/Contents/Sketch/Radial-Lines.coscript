@@ -155,7 +155,7 @@ var addLines = function(points,artboard, group, w, h, posX, posY, doc) {
     var lineshape = MSShapeGroup.shapeWithBezierPath(line);
     lineshape.setName('Line - ' + i);
     var shapeborder = lineshape.style().addStylePartOfType(1);
-    shapeborder.color = MSColor.colorWithSVGString("#AAAAAA");
+    shapeborder.color = MSImmutableColor.colorWithSVGString("#AAAAAA").newMutableCounterpart();
     shapeborder.thickness = 0.5;
     linegroup.addLayers([lineshape]);
   }
@@ -231,7 +231,7 @@ var prepareArtboard  = function(artboard, doc) {
     var lineshape = MSShapeGroup.shapeWithBezierPath(line);
     lineshape.setName('Line - ' + i);
     var shapeborder = lineshape.style().addStylePartOfType(1);
-    shapeborder.color = MSColor.colorWithSVGString(strokecolor);
+    shapeborder.color = MSImmutableColor.colorWithSVGString(strokecolor).newMutableCounterpart();
     shapeborder.thickness = strokewidth;
     parent.addLayers([lineshape]);
   }
